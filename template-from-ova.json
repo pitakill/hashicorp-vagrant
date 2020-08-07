@@ -1,0 +1,42 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox-ovf",
+      "source_path": "output-virtualbox-iso/ubuntu-18.04-vbox-template.ova",
+      "ssh_password": "{{user `ssh_pass`}}",
+      "ssh_username": "{{user `ssh_user`}}",
+      "shutdown_command": "sudo /sbin/halt -p"
+    }
+  ],
+  "provisioners": [
+    {
+      "script": "provision/update.sh",
+      "type": "shell"
+    },
+    {
+      "script": "provision/hashi-stack.sh",
+      "type": "shell"
+    },
+    {
+      "script": "provision/cleanup.sh",
+      "type": "shell"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest.json"
+    },
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": "hashi-machine.box"
+    }
+  ],
+  "variables": {
+    "domain": "local",
+    "hostname": "ubuntu",
+    "ssh_pass": "vagrant",
+    "ssh_user": "vagrant"
+  }
+}
